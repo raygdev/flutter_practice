@@ -1,6 +1,6 @@
 // import flutter helper library
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' show get;
+import 'package:http/http.dart' show Client;
 import 'dart:convert';
 import './models/image_model.dart';
 import './widgets/image_list.dart';
@@ -8,6 +8,9 @@ import './widgets/image_list.dart';
 // Create a class that will be custom widget
 // this class must extend the stateless widget base class
 class App extends StatefulWidget {
+  final Client client;
+
+  const App({super.key, required this.client});
   @override
   State<StatefulWidget> createState() {
     return AppState();
@@ -21,7 +24,7 @@ class AppState extends State<App> {
 
   void fetchImage() async {
    counter++;
-   var result = await get(
+   var result = await widget.client.get(
     Uri.parse('https://jsonplaceholder.typicode.com/photos/$counter')
     );
 
@@ -29,7 +32,6 @@ class AppState extends State<App> {
 
     setState(() {
       images.add(imageModel);
-      print(images.toString());
     });
   }
 
