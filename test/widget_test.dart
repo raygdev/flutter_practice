@@ -34,14 +34,19 @@ void main() {
         200
       );
      });
-
+    // wrap app for failing tests with image network
     mockNetworkImagesFor(() async {
+      // initialize app
       await tester.pumpWidget(App(client: mockHttpclient));
+
+      // no text should be found until button is pressed
       expect(find.text('accusamus beatae ad facilis cum similique qui sunt'), findsNothing);
 
+      //Tap + button to load image/title
       await tester.tap(find.byIcon(Icons.add));
       await tester.pump();
 
+      // image title should be present
       expect(find.text('accusamus beatae ad facilis cum similique qui sunt'), findsOneWidget);
     });
   });
