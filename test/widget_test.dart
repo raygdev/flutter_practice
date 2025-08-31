@@ -30,7 +30,7 @@ void main() {
     when(mockHttpclient.get(Uri.parse('https://jsonplaceholder.typicode.com/photos/1')))
      .thenAnswer((_) async {
       return Response(
-        '{"albumId":1,"id":1,"title":"accusamus beatae ad facilis cum similique qui sunt","url":"https://via.placeholder.com/600/92c952","thumbnailUrl":"https://via.placeholder.com/150/92c952"}',
+        '{"id":1,"title":"accusamus beatae ad facilis cum similique qui sunt","url":"https://via.placeholder.com/600/92c952"}',
         200
       );
      });
