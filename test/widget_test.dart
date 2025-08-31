@@ -7,24 +7,42 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:http/http.dart' show Client, Response;
+import 'package:flutter_practice/src/app.dart';
+import 'package:network_image_mock/network_image_mock.dart';
 
-import 'package:flutter_practice/main.dart';
+@GenerateMocks([Client])
+import 'widget_test.mocks.dart';
+
+
+
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  late MockClient mockHttpclient;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUp(() {
+    mockHttpclient = MockClient();
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('Images load when button is pressed', (WidgetTester tester) async {
+    when(mockHttpclient.get(Uri.parse('https://jsonplaceholder.typicode.com/photos/1')))
+     .thenAnswer((_) async {
+      return Response(
+        '{"albumId":1,"id":1,"title":"accusamus beatae ad facilis cum similique qui sunt","url":"https://via.placeholder.com/600/92c952","thumbnailUrl":"https://via.placeholder.com/150/92c952"}',
+        200
+      );
+     });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    mockNetworkImagesFor(() async {
+      await tester.pumpWidget(App(client: mockHttpclient));
+      expect(find.text('accusamus beatae ad facilis cum similique qui sunt'), findsNothing);
+
+      await tester.tap(find.byIcon(Icons.add));
+      await tester.pump();
+
+      expect(find.text('accusamus beatae ad facilis cum similique qui sunt'), findsOneWidget);
+    });
   });
 }
